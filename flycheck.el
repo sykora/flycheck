@@ -5317,14 +5317,30 @@ runner requires `std'."
   :safe #'booleanp
   :package-version '("flycheck" . "0.19"))
 
+(flycheck-def-option-var flycheck-rust-crate-type "lib" rust
+  "Crate-type for Rust.
+
+The value of this option is passed to the Rust compiler as the
+`--crate-type' option, and determines the compiler context. Valid
+values are `bin', `lib', `dynlib', `rlib' and `staticlib'.
+
+This can some impact on syntax checking analyses, such as
+dead-code warnings."
+  :type '(choice (const "Binary" "bin")
+                 (const "Library" "lib")
+                 (const "Dynamic" "dynlib")
+                 (const "Static" "staticlib")
+                 (const "RLib" "rlib")))
+
 (flycheck-define-checker rust
   "A Rust syntax checker using Rust compiler.
 
 This syntax checker needs Rust 0.10 or newer.
 
 See URL `http://www.rust-lang.org'."
-  :command ("rustc" "--crate-type=lib" "--no-trans"
+  :command ("rustc" "--no-trans"
             (option-flag "--test" flycheck-rust-check-tests)
+            (option-flag "--crate-type=" flycheck-rust-crate-type)
             (option-list "-L" flycheck-rust-library-path s-prepend)
             source-inplace)
   :error-patterns
